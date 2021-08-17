@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import React, { FC } from 'react';
-import { TodoListContainer } from './component/container/TodoList.container';
+import { TodoListPage } from './pages/todo/todo.page';
 
 export const App: FC = () => (
     <div>
-        <TodoListContainer />
+        <TodoListPage />
     </div>
 );
