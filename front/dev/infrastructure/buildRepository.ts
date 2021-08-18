@@ -1,8 +1,16 @@
-import { AxiosRequestConfig } from "axios";
-import { apiClient } from "./apiClient";
+import { AxiosRequestConfig } from 'axios';
+import { ApiClient } from './apiClient';
 
-export const buildFetchRepositroy = (path:string) => async<T, T2>(converter:(response:T) => T2, config?:AxiosRequestConfig) => {
-    const res = await apiClient<T>(path, config);
+// prettier-ignore
+export const buildGetRepository = (client: ApiClient) => (path: string, config?: AxiosRequestConfig) => <T>(): Promise<T> => {
+    const res = client<T>(path, config);
 
-    return converter(res);
-}
+    return res;
+};
+
+// prettier-ignore
+export const buildPostRepository = (client: ApiClient) => (path: string, data: Record<string, unknown>) => <T>(): Promise<T> => {
+    const res = client<T>(path, data);
+
+    return res;
+};
