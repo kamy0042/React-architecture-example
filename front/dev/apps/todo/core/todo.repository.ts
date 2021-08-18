@@ -1,17 +1,13 @@
-import { AxiosRequestConfig } from 'axios';
-import { buildFetchRepositroy } from '~/infrastructure/buildRepository';
-import { TodoListApi } from './todo.apiType';
+import { apiClient } from '~/infrastructure/apiClient';
+import { buildGetRepository } from '~/infrastructure/buildRepository';
+import { TodoListApiInput, TodoListApiOutput } from './todo.apiType';
 
-const fetchTodo = buildFetchRepositroy('todos');
+const toFrontData = (data: TodoListApiOutput) => data.map((item) => ({ id: item.id.toString(), title: item.title }));
 
-const fetchTodoList = async (config?:AxiosRequestConfig) => {
-    // eslint-disable-next-line arrow-body-style
-    const convertData = (data: TodoListApi) => {
-        return  data.map((item) => ({ id: item.id.toString(), title: item.title }));
-        // return Object.fromEntries(filterd.map((item) => [item.id, item]));
-    };
+const buildFetchTodoList = <T, T2>(converter: (response: T) => T2) => async (config?: TodoListApiInput) => {
+    const repository = buildGetRepository(apiClient('get'))('todos', config);
 
-    return fetchTodo(convertData, config);
+    return converter(await repository());
 };
 
-export const todoRepository = {fetchTodoList}
+export const todoRepository = { fetchTodoList: buildFetchTodoList(toFrontData) };
