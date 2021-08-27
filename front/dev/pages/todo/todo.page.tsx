@@ -1,7 +1,4 @@
-import { TodoListContainer } from "~/apps/todo/component/TodoList";
+import { TodoListContainer } from '~/apps/todo/component/TodoList';
+import { PageBuilder } from '../PageBuilder';
 
-export const TodoListPage = () => (
-    // todo:PageBuliderコンポーネントを使用
-    // <PageBuilder body={TodoListContainer} /> のように実装
-    <TodoListContainer />
-)
+export const TodoListPage = (): JSX.Element => <PageBuilder body={<TodoListContainer />} />;
