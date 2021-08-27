@@ -1,16 +1,16 @@
-import { AxiosRequestConfig } from 'axios';
-import { ApiClient } from './apiClient';
+import { AxiosInstance } from 'axios';
 
-// prettier-ignore
-export const buildGetRepository = (client: ApiClient) => (path: string, config?: AxiosRequestConfig) => <T>(): Promise<T> => {
-    const res = client<T>(path, config);
+export type ApiError = string;
+export type ApiResponse<Response> = Response | ApiError;
+export const isApiError = (arg: unknown): arg is ApiError => {
+    const t = arg as ApiError;
 
-    return res;
+    return typeof t === 'string' || typeof t === 'number';
 };
 
 // prettier-ignore
-export const buildPostRepository = (client: ApiClient) => (path: string, data: Record<string, unknown>) => <T>(): Promise<T> => {
-    const res = client<T>(path, data);
+export const buildGetRepository = (client:AxiosInstance) => <T, T2>(converter: (response: T) => T2) => (path:string) => async <Input>(arg?:Input) => {
+    const res = (await client.get<ApiResponse<T>>(path, arg));
 
-    return res;
+    return isApiError(res) ? res : converter(res.data as T);
 };
