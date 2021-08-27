@@ -6,7 +6,6 @@ import { asyncFetchTodoList } from '../presenter/todo.action';
 import { todoListSelector } from '../presenter/todo.selector';
 import { todoSlice } from '../presenter/todo.slice';
 
-
 /**
  * Type
  */
@@ -15,7 +14,7 @@ type TodoListProps = {
     list: {
         title: string;
         id: string;
-        count:string;
+        count: string;
     }[];
     handleClick: (id: TodoListProps['list'][number]['id']) => () => void;
 };
@@ -25,7 +24,6 @@ type TodoListProps = {
  */
 
 // todo:emotionによるスタイル実装
-
 
 /**
  * presentational component
@@ -54,18 +52,16 @@ export const TodoList: FC<TodoListProps> = ({ list, handleClick }) => (
 export const TodoListContainer = () => {
     const dispatch = useDispatch();
     const handleClick = (id: TodoListProps['list'][number]['id']) => () => dispatch(todoSlice.actions.deleteToDo(id));
-    const list = useSelector(todoListSelector)
-    const isBeforeFetch = useSelector((store:RootState) => store.todo.isBeforeFetch)
-    const isFetchFailed = useSelector((store:RootState) => store.todo.isFetchFailed)
+    const list = useSelector(todoListSelector);
+    const isFetched = useSelector((store: RootState) => store.http.isFetched);
 
     useEffect(() => {
-        dispatch(asyncFetchTodoList())
-    },[dispatch])
+        dispatch(asyncFetchTodoList());
+    }, [dispatch]);
 
     return (
-        <FetchWrapper isFailed={isFetchFailed} isLoading={isBeforeFetch} >
+        <FetchWrapper isFetched={isFetched}>
             <TodoList handleClick={handleClick} list={list} />
         </FetchWrapper>
-    )
-
-}
+    );
+};

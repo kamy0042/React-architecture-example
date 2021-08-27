@@ -1,46 +1,31 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { isApiError } from '~/infrastructure/buildRepository';
 import { TodoList } from '../core/todo.entity';
 import { asyncFetchTodoList } from './todo.action';
 
 type TodoStore = {
-    list:TodoList;
-    isBeforeFetch:boolean;
-    isFetchFailed:boolean;
-}
+    list: TodoList;
+};
 
 const initialState: TodoStore = {
-    list:[],
-    isBeforeFetch:true,
-    isFetchFailed:false,
+    list: [],
 };
 
 export const todoSlice = createSlice({
     name: 'todo',
     initialState,
     reducers: {
-        deleteToDo:(state, action:PayloadAction<string>) => ({
+        deleteToDo: (state, action: PayloadAction<string>) => ({
             ...state,
-            list:state.list.filter(item => item.id !== action.payload)
-        })
+            list: state.list.filter((item) => item.id !== action.payload),
+        }),
     },
-    extraReducers:(builder) => {
-        builder.addCase(asyncFetchTodoList.pending, (state) => ({
-            ...state,
-            isBeforeFetch:true,
-            isFetchFailed:false
-        }))
+    extraReducers: (builder) => {
         builder.addCase(asyncFetchTodoList.fulfilled, (state, action) => ({
             ...state,
-            list:action.payload,
-            isBeforeFetch:false,
-            isFetchFailed:false
-        }))
-        builder.addCase(asyncFetchTodoList.rejected, (state) => ({
-            ...state,
-            isBeforeFetch:false,
-            isFetchFailed:true
-        }))
-    }
+            list: isApiError(action.payload) ? state.list : action.payload,
+        }));
+    },
 });
 
 export default todoSlice.reducer;
